@@ -3,6 +3,7 @@ project(druid-core-test)
 project_add_executable(${PROJECT_NAME})
 
 target_sources(${PROJECT_NAME} PRIVATE
+    CommandLineParser.test.cpp
     Object.test.cpp
     EnumMask.test.cpp
     Signal.test.cpp
