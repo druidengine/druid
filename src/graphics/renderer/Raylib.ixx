@@ -27,6 +27,7 @@ namespace druid::graphics::renderer
 
 		auto end() -> void override
 		{
+			DrawFPS(0, 0);
 			EndDrawing();
 		}
 

@@ -1,17 +1,68 @@
 module;
 
 #include <cstdint>
+#include <variant>
 
 export module druid.core.event;
 
-namespace druid::core
+export namespace druid::core
 {
-	export class Event
+	struct EventKeyboard
 	{
-	public:
 		enum class Type : std::uint8_t
 		{
-			Close
+			None,
+			KeyPressed,
+			KeyReleased
 		};
+
+		enum class Key : std::uint8_t
+		{
+			None,
+			ArrowUp,
+			ArrowDown,
+			ArrowLeft,
+			ArrowRight
+		};
+
+		Type type{Type::None};
+		Key key{Key::None};
 	};
+
+	struct EventWindow
+	{
+		enum class Type : std::uint8_t
+		{
+			None,
+			Moved,
+			Resized,
+			Closed
+		};
+
+		Type type{Type::None};
+	};
+
+	struct EventMouse
+	{
+		enum class Type : std::uint8_t
+		{
+			None,
+			ButtonPressed,
+			ButtonReleased,
+			Moved
+		};
+
+		enum class Button : std::uint8_t
+		{
+			None,
+			Left,
+			Right,
+			Middle
+		};
+
+		Type type{Type::None};
+		Button button{Button::None};
+	};
+
+	using Event = std::variant<std::monostate, EventKeyboard, EventWindow, EventMouse>;
 }

@@ -43,6 +43,23 @@ try
 	paddle1.set_position({width * 0.1, height * 0.5});
 	paddle1.set_size({25, 100});
 	paddle1.set_color(Color::Green);
+	// auto& key = paddle1.create_child<KeyHandler>();
+
+	// auto& action_map = engine.create_child<ActionMap>();
+	// auto& move_up = action_map["move_up"];
+	// move_up.set_type(KeyBoard::KeyPressed);
+	// move_up.set_key(ArrowUp);
+	// move_up.set_joystickId(0);
+	// move_up.set_axis(Axis::X);
+	// move_up.set_range(0, 1);
+	// move_up.on_trigger([] {});
+
+	// paddle1.on_update([&move_up] {
+	//.  paddle1.set_velocity(0, 0);
+	//   if(move_up.is_pressed()) {
+	//.    paddle1.set_velocity(0, 1);
+	//   }
+	// });
 
 	auto& paddle2 = root.create_node<druid::graphics::NodeRectangle>();
 	paddle2.set_position({width * 0.9, height * 0.5});
