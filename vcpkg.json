@@ -1,14 +1,53 @@
 {
   "name": "druid",
-  "version-string": "2025.9.27",
+  "version-string": "2025.10.9",
   "port-version": 1,
-  "description": "A modern C++ game engine for creation and exploration.",
-  "homepage": "https://github.com/druidengine/druid",
+  "description": "Qt based C++ application, simulation, and game engine",
+  "homepage": "https://gitlab.com/druidengine/druid",
   "dependencies": [
-    "gtest",
-    "glm",
-    "magic-enum",
-    "raylib",
-    "palsigslot"
+    {
+      "name": "qtbase",
+      "default-features": false,
+      "host": true
+    },
+    {
+      "name": "qtbase",
+      "default-features": false,
+      "features": [
+        "png",
+        "opengl"
+      ]
+    },
+    {
+      "name": "qtbase",
+      "default-features": false,
+      "features": [
+        "egl",
+        "fontconfig",
+        "xcb",
+        "xcb-xlib",
+        "xrender"
+      ],
+      "platform": "linux"
+    },
+    {
+      "name": "qtbase",
+      "default-features": false,
+      "features": [
+        "egl",
+        "gles2"
+      ],
+      "platform": "android"
+    },
+    {
+      "name": "qtbase",
+      "default-features": false,
+      "features": [
+        "gles2"
+      ],
+      "platform": "emscripten"
+    },
+    "qtdeclarative",
+    "gtest"
   ]
 }
