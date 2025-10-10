@@ -4,7 +4,7 @@
         {
             "name": "use-vcpkg",
             "hidden": true,
-            "toolchainFile": "${sourceDir}/build/_deps/vcpkg-src/scripts/buildsystems/vcpkg.cmake"
+            "toolchainFile": "${sourceDir}/vcpkg/scripts/buildsystems/vcpkg.cmake"
         }
     ]
 }
