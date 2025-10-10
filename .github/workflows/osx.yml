@@ -13,7 +13,7 @@ jobs:
         config:
           - preset: arm64-osx-clang-release
 
-    runs-on: [self-hosted, macOS]
+    runs-on: macos-latest
 
     env:
       VCPKG_DEFAULT_BINARY_CACHE: ${{ github.workspace }}/.vcpkg_cache

@@ -126,7 +126,7 @@
                 "outputOnFailure": true
             },
             "execution": {
-                "jobs": 2
+                "jobs": 3
             }
         },
         {
@@ -136,7 +136,7 @@
                 "outputOnFailure": true
             },
             "execution": {
-                "jobs": 2
+                "jobs": 3
             }
         },
         {
@@ -146,7 +146,7 @@
                 "outputOnFailure": true
             },
             "execution": {
-                "jobs": 2
+                "jobs": 3
             }
         },
         {
@@ -156,7 +156,7 @@
                 "outputOnFailure": true
             },
             "execution": {
-                "jobs": 2
+                "jobs": 3
             }
         }
     ]
