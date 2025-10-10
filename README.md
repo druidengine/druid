@@ -78,7 +78,8 @@ For supported presets review [platform-linux.json](./cmake/preset/platform-linux
 1. Install dependencies (Ubuntu/Debian):
    ```bash
    sudo apt install -y curl tar git zip unzip make autoconf libtool ninja-build cmake
-   sudo apt install -y libxinerama-dev libxcursor-dev xorg-dev libglu1-mesa-dev pkg-config libgl1-mesa-dev libx11-dev libxrandr-dev
+   sudo apt install -y 'libxcb*-dev' libx11-dev libxext-dev libxfixes-dev libgl1-mesa-dev libglu1-mesa-dev libegl1-mesa-dev
+   sudo apt install -y libxrender-dev libxi-dev libxkbcommon-dev libxkbcommon-x11-dev libxinerama-dev libfontconfig1-dev libfreetype6-dev
    ```
 
 1. Configure the project:

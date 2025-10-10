@@ -65,7 +65,11 @@
     "buildPresets": [
         {
             "name": "arm64-osx-clang-debug",
-            "configurePreset": "arm64-osx-clang-debug"
+            "configurePreset": "arm64-osx-clang-debug",
+            "targets": [
+                "all",
+                "clang-tidy"
+            ]
         },
         {
             "name": "arm64-osx-clang-release",

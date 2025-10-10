@@ -25,10 +25,7 @@
                 "use-clang",
                 "use-ninja",
                 "use-vcpkg"
-            ],
-            "cacheVariables": {
-                "CMAKE_CXX_CLANG_TIDY": "clang-tidy"
-            }
+            ]
         },
         {
             "name": "x64-linux-clang-release",
@@ -94,7 +91,11 @@
     "buildPresets": [
         {
             "name": "x64-linux-clang-debug",
-            "configurePreset": "x64-linux-clang-debug"
+            "configurePreset": "x64-linux-clang-debug",
+            "targets": [
+                "all",
+                "clang-tidy"
+            ]
         },
         {
             "name": "x64-linux-clang-release",

@@ -28,21 +28,25 @@ set(CMAKE_CXX_STANDARD 26)
 # set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_CXX_SCAN_FOR_MODULES ON)
+set(CMAKE_AUTOMOC ON)
 
 include(CTest)
 include(GoogleTest)
 
-option(BUILD_ENABLE_HARDENED "Enable hardened compiler options" OFF)
 option(BUILD_TESTING "Enable building ${PROJECT_NAME} test applications." ON)
 
-set(PROJECT_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include)
-include_directories(${PROJECT_INCLUDE_DIR})
+set(QT_QML_GENERATE_QMLLS_INI ON)
+set(QT_NO_PRIVATE_MODULE_WARNING ON)
 
-# Define build directory includes as system to avoid tools like clang-tidy from scanning them.
-include_directories(SYSTEM ${CMAKE_CURRENT_BINARY_DIR}/include)
+find_package(Qt6 CONFIG REQUIRED COMPONENTS Quick)
+
+qt_standard_project_setup()
+
+# Set Qt policies to suppress warnings and use modern behavior
+qt_policy(SET QTP0001 NEW)  # Use ':/qt/qml/' as default resource prefix for QML modules
+qt_policy(SET QTP0004 NEW)  # Require qmldir files for each extra directory with .qml files
 
 add_subdirectory(app)
-add_subdirectory(src)
 
 # set(PROJECT_CONFIG_VERSION ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_ROOT_NAME}-config-version.cmake)
 # write_basic_package_version_file(${PROJECT_CONFIG_VERSION} VERSION 0.0.0 COMPATIBILITY SameMajorVersion)
@@ -50,3 +54,11 @@ add_subdirectory(src)
 # install(EXPORT ${PROJECT_ROOT_NAME}-config DESTINATION ${CMAKE_INSTALL_DATAROOTDIR})
 # install(DIRECTORY include/${PROJECT_ROOT_NAME} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 # install(FILES ${PROJECT_CONFIG_VERSION} DESTINATION ${CMAKE_INSTALL_DATAROOTDIR})
+
+if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+    add_custom_target(clang-tidy
+        COMMAND run-clang-tidy -p ${CMAKE_BINARY_DIR} -j 8 -source-filter="^${CMAKE_SOURCE_DIR}/\(app|src|module\)/.*"
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+        COMMENT "Running clang-tidy on all files"
+    )
+endif()

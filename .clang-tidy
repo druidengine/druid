@@ -1,3 +1,5 @@
+# To exclude build directory files, run clang-tidy with:
+# run-clang-tidy -p build -source-filter='^(?!.*build/).*'
 ---
 Checks: "-*,
   clang-diagnostic-*,
@@ -5,19 +7,14 @@ Checks: "-*,
   bugprone-*,
   cert-*,
   cppcoreguidelines-*,
-  -cppcoreguidelines-pro-type-union-access,
   misc-*,
-  -misc-include-cleaner,
-  -misc-no-recursion,
   modernize-*,
   readability-*,
   -readability-identifier-length,
-  -readability-simplify-boolean-expr,
-  ,-readability-redundant-declaration,
   performance-*"
 
 WarningsAsErrors: "*"
-HeaderFilterRegex: ".*ixx"
+HeaderFilterRegex: ".*"
 FormatStyle: file
 UseColor: "true"
 CheckOptions:
