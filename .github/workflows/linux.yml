@@ -2,7 +2,7 @@ name: linux
 
 permissions:
   contents: read
-  packages: read
+  packages: write
 
 on:
   push:
@@ -28,24 +28,20 @@ jobs:
         password: ${{ secrets.GITHUB_TOKEN }}
 
     env:
-      VCPKG_DEFAULT_BINARY_CACHE: ${{ github.workspace }}/.vcpkg_cache
-      VCPKG_BINARY_SOURCES: "default"
-      VCPKG_CLEAN_AFTER_BUILD: 1
+      VCPKG_BINARY_SOURCES: "clear;nuget,github,readwrite"
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: vcpkg-cache-directory
-        run: mkdir -p $VCPKG_DEFAULT_BINARY_CACHE
-        shell: bash
-
-      - name: vcpkg-cache-restore
-        uses: actions/cache@v4
-        with:
-          path: ${{ env.VCPKG_DEFAULT_BINARY_CACHE }}
-          key: vcpkg-${{ matrix.config.compiler }}-${{ hashFiles('vcpkg.json') }}
-          restore-keys: |
-            vcpkg-${{ matrix.config.compiler }}-
+      - name: nuget authentication
+        run: |
+          mono `vcpkg/vcpkg fetch nuget | tail -n 1` \
+          sources add \
+          -source https://nuget.pkg.github.com/druidengine/index.json \
+          -name github \
+          -username ${{ github.actor }} \
+          -password ${{ secrets.GITHUB_TOKEN }} \
+          -storepasswordincleartext
 
       - name: cmake-configure
         run: cmake --preset ${{ matrix.config.preset }}
