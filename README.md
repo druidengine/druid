@@ -102,6 +102,45 @@ For supported presets review [platform-linux.json](./cmake/preset/platform-linux
    ctest --preset x64-linux-gcc-debug
    ```
 
+### MacOS (arm)
+
+For supported presets review [platform-osx.json](./cmake/preset/platform-osx.json)
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/druidengine/druid
+   cd druid
+   ```
+
+1. Install dependencies (Ubuntu/Debian):
+
+   You may need to ensure the MacOS SDK is installed (typically comes with XCode).
+
+   ```bash
+   brew install llvm@20 ninja cmake
+   brew install autoconf autoconf-archive automake libtool
+   ```
+
+1. Configure the project:
+   ```bash
+   cmake --preset arm64-osx-clang-debug
+   ```
+
+1. Build the project:
+   ```bash
+   cmake --build --preset arm64-osx-clang-debug
+   ```
+
+1. Run the Pong example:
+   ```bash
+   ./build/app/pong/pong.app/Contents/MacOS/pong
+   ```
+
+1. Run unit tests:
+   ```bash
+   ctest --preset arm64-osx-clang-debug
+   ```
+
 ## Community and contributing
 
 To get started contributing to the project, review the [CONTRIBUTING.md](CONTRIBUTING.md) document.

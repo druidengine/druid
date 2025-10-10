@@ -30,6 +30,7 @@ jobs:
     env:
       VCPKG_DEFAULT_BINARY_CACHE: ${{ github.workspace }}/.vcpkg_cache
       VCPKG_BINARY_SOURCES: "default"
+      VCPKG_CLEAN_AFTER_BUILD: 1
 
     steps:
       - uses: actions/checkout@v4

@@ -1,57 +1,58 @@
 name: windows
 
 on:
-    push:
-        branches: ["main"]
-    pull_request:
-        branches: ["main"]
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
 
 jobs:
-    build:
-        strategy:
-            matrix:
-                config:
-                    - preset: x64-windows-msvc-release
+  build:
+    strategy:
+      matrix:
+        config:
+          - preset: x64-windows-msvc-release
 
-        runs-on: windows-latest
+    runs-on: windows-latest
 
-        env:
-            VCPKG_DEFAULT_BINARY_CACHE: ${{ github.workspace }}/.vcpkg_cache
-            VCPKG_BINARY_SOURCES: "default"
+    env:
+      VCPKG_DEFAULT_BINARY_CACHE: ${{ github.workspace }}/.vcpkg_cache
+      VCPKG_BINARY_SOURCES: "default"
+      VCPKG_CLEAN_AFTER_BUILD: 1
 
-        steps:
-            - uses: actions/checkout@v4
+    steps:
+      - uses: actions/checkout@v4
 
-            - name: vcpkg-cache-directory
-              run: mkdir -p $VCPKG_DEFAULT_BINARY_CACHE
-              shell: bash
+      - name: vcpkg-cache-directory
+        run: mkdir -p $VCPKG_DEFAULT_BINARY_CACHE
+        shell: bash
 
-            - name: vcpkg-cache-restore
-              uses: actions/cache@v4
-              with:
-                  path: ${{ env.VCPKG_DEFAULT_BINARY_CACHE }}
-                  key: vcpkg-${{ runner.os }}-${{ hashFiles('vcpkg.json') }}
-                  restore-keys: |
-                      vcpkg-${{ runner.os }}-
+      - name: vcpkg-cache-restore
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.VCPKG_DEFAULT_BINARY_CACHE }}
+          key: vcpkg-${{ runner.os }}-${{ hashFiles('vcpkg.json') }}
+          restore-keys: |
+            vcpkg-${{ runner.os }}-
 
-            - name: install-tools-windows
-              run: |
-                  choco install -y cmake ninja
-              shell: bash
+      - name: install-tools-windows
+        run: |
+          choco install -y cmake ninja
+        shell: bash
 
-            - name: setup-msvc
-              uses: ilammy/msvc-dev-cmd@v1
-              with:
-                  arch: amd64
+      - name: setup-msvc
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: amd64
 
-            - name: cmake-configure
-              run: cmake --preset ${{ matrix.config.preset }}
-              shell: bash
+      - name: cmake-configure
+        run: cmake --preset ${{ matrix.config.preset }}
+        shell: bash
 
-            - name: cmake-build
-              run: cmake --build --preset ${{ matrix.config.preset }}
-              shell: bash
+      - name: cmake-build
+        run: cmake --build --preset ${{ matrix.config.preset }}
+        shell: bash
 
-            - name: cmake-test
-              run: ctest --preset ${{ matrix.config.preset }}
-              shell: bash
+      - name: cmake-test
+        run: ctest --preset ${{ matrix.config.preset }}
+        shell: bash

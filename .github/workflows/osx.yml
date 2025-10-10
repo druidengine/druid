@@ -18,6 +18,7 @@ jobs:
     env:
       VCPKG_DEFAULT_BINARY_CACHE: ${{ github.workspace }}/.vcpkg_cache
       VCPKG_BINARY_SOURCES: "default"
+      VCPKG_CLEAN_AFTER_BUILD: 1
 
     steps:
       - uses: actions/checkout@v4
@@ -36,6 +37,7 @@ jobs:
       - name: install-tools-macos
         run: |
           brew install llvm@20 ninja cmake
+          brew install autoconf autoconf-archive automake libtool
           echo "/opt/homebrew/opt/llvm@20/bin" >> $GITHUB_PATH
 
       - name: cmake-configure
