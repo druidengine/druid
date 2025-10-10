@@ -1,5 +1,8 @@
 name: windows
 
+permissions:
+  packages: write
+
 on:
   push:
     branches: ["main"]

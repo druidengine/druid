@@ -13,10 +13,11 @@ jobs:
         config:
           - preset: arm64-osx-clang-release
 
-    runs-on: macos-latest
+    runs-on: [self-hosted, macOS]
 
     env:
-      VCPKG_BINARY_SOURCES: "clear;nuget,github,readwrite"
+      VCPKG_DEFAULT_BINARY_CACHE: ${{ github.workspace }}/.vcpkg_cache
+      VCPKG_BINARY_SOURCES: "default"
 
     steps:
       - uses: actions/checkout@v4
@@ -24,24 +25,22 @@ jobs:
           submodules: recursive
           fetch-depth: 0
 
-      - name: initialize vcpkg
-        run: ./vcpkg/bootstrap-vcpkg.sh
+      - name: vcpkg-cache-directory
+        run: mkdir -p $VCPKG_DEFAULT_BINARY_CACHE
+
+      - name: vcpkg-cache-restore
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.VCPKG_DEFAULT_BINARY_CACHE }}
+          key: vcpkg-${{ runner.os }}-${{ hashFiles('vcpkg.json') }}
+          restore-keys: |
+            vcpkg-${{ runner.os }}-
 
       - name: install-tools-macos
         run: |
-          brew install llvm@20 ninja cmake mono
+          brew install llvm@20 ninja cmake
           brew install autoconf autoconf-archive automake libtool
           echo "/opt/homebrew/opt/llvm@20/bin" >> $GITHUB_PATH
-
-      - name: nuget authentication
-        run: |
-          mono `./vcpkg/vcpkg fetch nuget | tail -n 1` \
-          sources add \
-          -source https://nuget.pkg.github.com/druidengine/index.json \
-          -name github \
-          -username ${{ github.actor }} \
-          -password ${{ secrets.GITHUB_TOKEN }} \
-          -storepasswordincleartext
 
       - name: cmake-configure
         run: cmake --preset ${{ matrix.config.preset }}
