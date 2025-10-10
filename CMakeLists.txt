@@ -1,16 +1,5 @@
 cmake_minimum_required(VERSION 3.31)
 
-include(FetchContent)
-
-# Acquire VCPKG
-FetchContent_Declare(
-    vcpkg
-    GIT_REPOSITORY https://github.com/microsoft/vcpkg.git
-    GIT_TAG 2025.09.17
-)
-
-FetchContent_MakeAvailable(vcpkg)
-
 project(druid LANGUAGES CXX)
 
 include(GenerateExportHeader)

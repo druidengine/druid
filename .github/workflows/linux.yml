@@ -32,10 +32,16 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: initialize vcpkg
+        run: ./vcpkg/bootstrap-vcpkg.sh
 
       - name: nuget authentication
         run: |
-          mono `vcpkg/vcpkg fetch nuget | tail -n 1` \
+          mono `./vcpkg/vcpkg fetch nuget | tail -n 1` \
           sources add \
           -source https://nuget.pkg.github.com/druidengine/index.json \
           -name github \
