@@ -65,7 +65,11 @@
     "buildPresets": [
         {
             "name": "arm64-osx-clang-debug",
-            "configurePreset": "arm64-osx-clang-debug"
+            "configurePreset": "arm64-osx-clang-debug",
+            "targets": [
+                "all",
+                "clang-tidy"
+            ]
         },
         {
             "name": "arm64-osx-clang-release",
@@ -88,7 +92,7 @@
                 "outputOnFailure": true
             },
             "execution": {
-                "jobs": 2
+                "jobs": 3
             }
         },
         {
@@ -98,7 +102,7 @@
                 "outputOnFailure": true
             },
             "execution": {
-                "jobs": 2
+                "jobs": 3
             }
         },
         {
@@ -108,7 +112,7 @@
                 "outputOnFailure": true
             },
             "execution": {
-                "jobs": 2
+                "jobs": 3
             }
         },
         {
@@ -118,7 +122,7 @@
                 "outputOnFailure": true
             },
             "execution": {
-                "jobs": 2
+                "jobs": 3
             }
         }
     ]

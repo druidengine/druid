@@ -78,7 +78,8 @@ For supported presets review [platform-linux.json](./cmake/preset/platform-linux
 1. Install dependencies (Ubuntu/Debian):
    ```bash
    sudo apt install -y curl tar git zip unzip make autoconf libtool ninja-build cmake
-   sudo apt install -y libxinerama-dev libxcursor-dev xorg-dev libglu1-mesa-dev pkg-config libgl1-mesa-dev libx11-dev libxrandr-dev
+   sudo apt install -y 'libxcb*-dev' libx11-dev libxext-dev libxfixes-dev libgl1-mesa-dev libglu1-mesa-dev libegl1-mesa-dev
+   sudo apt install -y libxrender-dev libxi-dev libxkbcommon-dev libxkbcommon-x11-dev libxinerama-dev libfontconfig1-dev libfreetype6-dev
    ```
 
 1. Configure the project:
@@ -99,6 +100,45 @@ For supported presets review [platform-linux.json](./cmake/preset/platform-linux
 1. Run unit tests:
    ```bash
    ctest --preset x64-linux-gcc-debug
+   ```
+
+### MacOS (arm)
+
+For supported presets review [platform-osx.json](./cmake/preset/platform-osx.json)
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/druidengine/druid
+   cd druid
+   ```
+
+1. Install dependencies (Ubuntu/Debian):
+
+   You may need to ensure the MacOS SDK is installed (typically comes with XCode).
+
+   ```bash
+   brew install llvm@20 ninja cmake
+   brew install autoconf autoconf-archive automake libtool
+   ```
+
+1. Configure the project:
+   ```bash
+   cmake --preset arm64-osx-clang-debug
+   ```
+
+1. Build the project:
+   ```bash
+   cmake --build --preset arm64-osx-clang-debug
+   ```
+
+1. Run the Pong example:
+   ```bash
+   ./build/app/pong/pong.app/Contents/MacOS/pong
+   ```
+
+1. Run unit tests:
+   ```bash
+   ctest --preset arm64-osx-clang-debug
    ```
 
 ## Community and contributing

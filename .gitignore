@@ -31,9 +31,6 @@
 *.out
 *.app
 
-# VCPKG
-vcpkg/
-
 # Build
 build*
 
