@@ -41,16 +41,22 @@ jobs:
       #   run: choco install -y cmake ninja
       #   shell: bash
 
+      # - name: setup-msvc
+      #   uses: ilammy/msvc-dev-cmd@v1
+      #   with:
+      #     arch: amd64
       - name: setup-msvc
-        uses: ilammy/msvc-dev-cmd@v1
-        with:
-          arch: amd64
+        run: call "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvarsall.bat" amd64
+        shell: cmd
 
       - name: cmake-configure
         run: cmake --preset ${{ matrix.config.preset }}
+        shell: cmd
 
       - name: cmake-build
         run: cmake --build --preset ${{ matrix.config.preset }}
+        shell: cmd
 
       - name: cmake-test
         run: ctest --preset ${{ matrix.config.preset }}
+        shell: cmd
