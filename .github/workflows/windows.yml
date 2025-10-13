@@ -48,12 +48,9 @@ jobs:
 
       - name: cmake-configure
         run: cmake --preset ${{ matrix.config.preset }}
-        shell: bash
 
       - name: cmake-build
         run: cmake --build --preset ${{ matrix.config.preset }}
-        shell: bash
 
       - name: cmake-test
         run: ctest --preset ${{ matrix.config.preset }}
-        shell: bash
