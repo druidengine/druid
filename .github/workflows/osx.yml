@@ -21,6 +21,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 0
 
       - name: vcpkg-cache-directory
         run: mkdir -p $VCPKG_DEFAULT_BINARY_CACHE
@@ -36,6 +39,7 @@ jobs:
       - name: install-tools-macos
         run: |
           brew install llvm@20 ninja cmake
+          brew install autoconf autoconf-archive automake libtool
           echo "/opt/homebrew/opt/llvm@20/bin" >> $GITHUB_PATH
 
       - name: cmake-configure
