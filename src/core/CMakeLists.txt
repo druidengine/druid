@@ -10,6 +10,7 @@ target_sources(${PROJECT_NAME} PUBLIC
     FILE_SET cxx_modules TYPE CXX_MODULES FILES
         Concepts.ixx
         Engine.ixx
+        Entity.ixx
         EnumMask.ixx
         Event.ixx
         File.ixx
@@ -17,7 +18,9 @@ target_sources(${PROJECT_NAME} PUBLIC
 )
 
 find_package(PalSigslot CONFIG REQUIRED)
+find_package(EnTT CONFIG REQUIRED)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE
     Pal::Sigslot
+    EnTT::EnTT
 )
