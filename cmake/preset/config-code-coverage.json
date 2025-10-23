@@ -1,0 +1,12 @@
+{
+  "version": 6,
+  "configurePresets": [
+    {
+      "name": "config-code-coverage",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_CXX_FLAGS": "--coverage -fprofile-instr-generate -fcoverage-mapping"
+      }
+    }
+  ]
+}

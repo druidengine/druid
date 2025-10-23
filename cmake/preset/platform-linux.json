@@ -2,6 +2,7 @@
     "version": 7,
     "include": [
         "config-build-dir.json",
+        "config-code-coverage.json",
         "config-debug.json",
         "config-release.json",
         "host-arm64-linux.json",
@@ -22,6 +23,7 @@
                 "target-x64-linux",
                 "config-debug",
                 "config-build-dir",
+                "config-code-coverage",
                 "use-clang",
                 "use-ninja",
                 "use-vcpkg"
