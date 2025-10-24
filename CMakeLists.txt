@@ -59,4 +59,28 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
         COMMENT "Running clang-tidy on all files"
     )
+
+    add_custom_target(clang-coverage
+        COMMENT "Generating LLVM coverage data..."
+        COMMAND ${CMAKE_COMMAND} -E env LLVM_PROFILE_FILE=coverage/raw.profraw PATH=/usr/lib/llvm-22/bin:$ENV{PATH}
+        ${CMAKE_COMMAND} --build ${CMAKE_BINARY_DIR} --parallel ${NPROC}
+        COMMAND ${CMAKE_COMMAND} -E env LLVM_PROFILE_FILE=coverage/raw.profraw PATH=/usr/lib/llvm-22/bin:$ENV{PATH}
+        ctest --parallel ${NPROC}
+        COMMAND ${CMAKE_COMMAND} -E make_directory coverage
+        COMMAND find ${CMAKE_BINARY_DIR} -name "*.profraw" -exec cp {} coverage/ \;
+        COMMAND llvm-profdata merge -sparse coverage/*.profraw -o coverage/indexed.profdata
+        COMMENT "Test executables found for coverage:"
+        COMMAND find ${CMAKE_BINARY_DIR}/src ${CMAKE_BINARY_DIR}/app -type f -executable \( -path "*/test/*" -o -path "*/bin/*" \)
+        COMMAND llvm-cov show
+            -instr-profile=coverage/indexed.profdata
+            --show-line-counts-or-regions
+            --ignore-filename-regex="build/.*|.*external/.*|.*vcpkg/.*|.*third_party/.*|.*/test/.*|.*\\.test\\.cpp"
+            $(find ${CMAKE_BINARY_DIR} -type f -executable -path "*/test/*" -o -path "*/bin/*")
+            -format=html -output-dir=coverage-report
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+        COMMENT "Running Clang coverage generation"
+        VERBATIM
+    )
 endif()
+
+
