@@ -21,6 +21,10 @@ jobs:
           - preset: x64-linux-clang-debug
             compiler: clang
             clang-tidy: true
+            coverage: false
+          - preset: x64-linux-clang-coverage
+            compiler: clang
+            clang-tidy: false
             coverage: true
 
     runs-on: ubuntu-latest
@@ -64,9 +68,7 @@ jobs:
 
       - name: clang-coverage
         if: ${{ matrix.config.coverage }}
-        run: |
-          apt-get update && apt-get install -y llvm-22
-          cmake --build --preset ${{ matrix.config.preset }} --target clang-coverage
+        run: cmake --build --preset ${{ matrix.config.preset }} --target llvm-coverage
 
       - name: upload-code-coverage-artifact
         if: ${{ matrix.config.compiler == 'clang' }}

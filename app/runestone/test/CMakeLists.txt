@@ -1,6 +1,6 @@
 project(runestone-test)
 
-project_add_executable(${PROJECT_NAME})
+project_add_test(${PROJECT_NAME})
 
 target_sources(${PROJECT_NAME} PRIVATE
     ChessBoard.test.cpp
@@ -16,6 +16,3 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     magic_enum::magic_enum
     runestone-modules
 )
-
-enable_testing()
-add_test(${PROJECT_NAME} ${PROJECT_NAME})

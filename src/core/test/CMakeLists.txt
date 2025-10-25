@@ -1,6 +1,6 @@
 project(druid-core-test)
 
-project_add_executable(${PROJECT_NAME})
+project_add_test(${PROJECT_NAME})
 
 target_sources(${PROJECT_NAME} PRIVATE
     Engine.test.cpp
@@ -9,8 +9,6 @@ target_sources(${PROJECT_NAME} PRIVATE
     EnumMask.test.cpp
     Signal.test.cpp
 )
-
-enable_testing()
     
 find_package(GTest CONFIG REQUIRED)
 
@@ -19,5 +17,3 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     GTest::gtest
     GTest::gtest_main
 )
-
-add_test(${PROJECT_NAME} ${PROJECT_NAME})

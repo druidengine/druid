@@ -19,6 +19,7 @@ include(GNUInstallDirs)
 include(cmake/project_compile_options.cmake)
 include(cmake/project_add_library.cmake)
 include(cmake/project_add_executable.cmake)
+include(cmake/project_add_test.cmake)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
@@ -41,6 +42,8 @@ include_directories(${PROJECT_INCLUDE_DIR})
 # Define build directory includes as system to avoid tools like clang-tidy from scanning them.
 include_directories(SYSTEM ${CMAKE_CURRENT_BINARY_DIR}/include)
 
+set(PROJECT_TEST_EXECUTABLES "")
+
 add_subdirectory(app)
 add_subdirectory(src)
 
@@ -51,6 +54,8 @@ add_subdirectory(src)
 # install(DIRECTORY include/${PROJECT_ROOT_NAME} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 # install(FILES ${PROJECT_CONFIG_VERSION} DESTINATION ${CMAKE_INSTALL_DATAROOTDIR})
 
+message(STATUS "Tests registered: ${PROJECT_TEST_EXECUTABLES}")
+
 if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
     include(ProcessorCount)
     ProcessorCount(NPROC)
@@ -60,27 +65,8 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
         COMMENT "Running clang-tidy on all files"
     )
 
-    add_custom_target(clang-coverage
-        COMMENT "Generating LLVM coverage data..."
-        COMMAND ${CMAKE_COMMAND} -E env LLVM_PROFILE_FILE=coverage/raw.profraw PATH=/usr/lib/llvm-22/bin:$ENV{PATH}
-        ${CMAKE_COMMAND} --build ${CMAKE_BINARY_DIR} --parallel ${NPROC}
-        COMMAND ${CMAKE_COMMAND} -E env LLVM_PROFILE_FILE=coverage/raw.profraw PATH=/usr/lib/llvm-22/bin:$ENV{PATH}
-        ctest --parallel ${NPROC}
-        COMMAND ${CMAKE_COMMAND} -E make_directory coverage
-        COMMAND find ${CMAKE_BINARY_DIR} -name "*.profraw" -exec cp {} coverage/ \;
-        COMMAND llvm-profdata merge -sparse coverage/*.profraw -o coverage/indexed.profdata
-        COMMENT "Test executables found for coverage:"
-        COMMAND find ${CMAKE_BINARY_DIR}/src ${CMAKE_BINARY_DIR}/app -type f -executable \( -path "*/test/*" -o -path "*/bin/*" \)
-        COMMAND llvm-cov show
-            -instr-profile=coverage/indexed.profdata
-            --show-line-counts-or-regions
-            --ignore-filename-regex="build/.*|.*external/.*|.*vcpkg/.*|.*third_party/.*|.*/test/.*|.*\\.test\\.cpp"
-            $(find ${CMAKE_BINARY_DIR} -type f -executable -path "*/test/*" -o -path "*/bin/*")
-            -format=html -output-dir=coverage-report
-        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-        COMMENT "Running Clang coverage generation"
-        VERBATIM
+    add_custom_target(llvm-coverage
+        COMMAND ${CMAKE_SOURCE_DIR}/cmake/scripts/llvm_coverage.sh ${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR}
+        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
     )
 endif()
-
-

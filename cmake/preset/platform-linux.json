@@ -23,7 +23,6 @@
                 "target-x64-linux",
                 "config-debug",
                 "config-build-dir",
-                "config-code-coverage",
                 "use-clang",
                 "use-ninja",
                 "use-vcpkg"
@@ -39,6 +38,13 @@
                 "use-clang",
                 "use-ninja",
                 "use-vcpkg"
+            ]
+        },
+        {
+            "name": "x64-linux-clang-coverage",
+            "inherits": [
+                "x64-linux-clang-debug",
+                "config-code-coverage"
             ]
         },
         {
@@ -92,6 +98,11 @@
     ],
     "buildPresets": [
         {
+            "name": "x64-linux-clang-coverage",
+            "configurePreset": "x64-linux-clang-coverage",
+            "jobs": 8
+        },
+        {
             "name": "x64-linux-clang-debug",
             "configurePreset": "x64-linux-clang-debug",
             "jobs": 8
@@ -123,6 +134,13 @@
         }
     ],
     "testPresets": [
+        {
+            "name": "x64-linux-clang-coverage",
+            "configurePreset": "x64-linux-clang-coverage",
+            "environment": {
+                "LLVM_PROFILE_FILE": "${sourceDir}/build/coverage/%p.profraw"
+            }
+        },
         {
             "name": "x64-linux-clang-debug",
             "configurePreset": "x64-linux-clang-debug",
