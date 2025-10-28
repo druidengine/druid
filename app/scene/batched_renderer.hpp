@@ -223,7 +223,7 @@ public:
 
 				for (int j = 0; j < baseMesh.triangleCount * 3; j++)
 				{
-					batchedMesh.indices[indexOffset + j] = baseMesh.indices[j] + vertexOffset;
+					batchedMesh.indices[indexOffset + j] = baseMesh.indices[j] + static_cast<unsigned short>(vertexOffset);
 				}
 			}
 		}
