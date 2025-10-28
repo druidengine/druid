@@ -15,9 +15,9 @@ jobs:
     strategy:
       matrix:
         config:
-          # - preset: x64-linux-gcc-release
-          #   compiler: gcc
-          #   clang-tidy: false
+          - preset: x64-linux-gcc-release
+            compiler: gcc
+            clang-tidy: false
           - preset: x64-linux-clang-debug
             compiler: clang
             clang-tidy: true
