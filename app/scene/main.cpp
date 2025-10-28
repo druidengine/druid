@@ -2,8 +2,8 @@
 #include <raylib.h>
 #include <raymath.h>
 #include <rlgl.h>
-
-#include <iostream>
+#include <format>
+#include <vector>
 
 auto main() -> int
 {
@@ -36,7 +36,7 @@ auto main() -> int
 	float orbitHeight = 3.0F;
 
 	// Light setup
-	Vector3 lightPosition = Vector3{4.0F, 8.0F, 4.0F};
+	Vector3 lightPosition = Vector3{0.0F, 0.0F, 0.0F};
 	// float lightAngle = 0.0F;
 
 	// Custom lighting shader code
@@ -155,6 +155,34 @@ void main()
 	Model lightSphereModel = LoadModelFromMesh(lightSphereMesh);
 	lightSphereModel.materials[0] = lightMaterial;
 
+	const auto generate_positions = [](std::size_t count, auto radius)
+	{
+		// Generate 300 random cube positions in spherical distribution
+		std::vector<Vector3> v{count};
+
+		// Seed random number generator
+		SetRandomSeed(42); // Fixed seed for consistent results
+
+		for (auto& pos : v)
+		{
+			// Generate random spherical coordinates
+			// float radius = GetRandomValue(50, 200) / 10.0F; // Random radius between 5 and 20
+			float theta = GetRandomValue(0, 360) * DEG2RAD; // Random angle 0-360 degrees
+			float phi = GetRandomValue(-90, 90) * DEG2RAD;	// Random elevation -90 to 90 degrees
+
+			// Convert spherical to cartesian coordinates
+			pos.x = radius * cosf(phi) * cosf(theta);
+			pos.y = radius * sinf(phi);
+			pos.z = radius * cosf(phi) * sinf(theta);
+		}
+
+		return v;
+	};
+
+	const auto cubePositions = generate_positions(10000, 250);
+	const auto cylinderPositions = generate_positions(5000, 100);
+	const auto spherePositions = generate_positions(2500, 50);
+
 	while (!WindowShouldClose())
 	{
 		// Update orbit camera
@@ -175,16 +203,16 @@ void main()
 			// Clamp height
 			if (orbitHeight < 1.0F)
 				orbitHeight = 1.0F;
-			if (orbitHeight > 100.0F)
-				orbitHeight = 100.0F;
+			if (orbitHeight > 1000.0F)
+				orbitHeight = 1000.0F;
 		}
 
 		// Zoom with mouse wheel
 		orbitRadius -= GetMouseWheelMove() * 0.5F;
 		if (orbitRadius < 2.0F)
 			orbitRadius = 2.0F;
-		if (orbitRadius > 20.0F)
-			orbitRadius = 20.0F;
+		if (orbitRadius > 1000.0F)
+			orbitRadius = 1000.0F;
 
 		BeginDrawing();
 
@@ -204,33 +232,32 @@ void main()
 		// Draw the light source using mesh
 		DrawModel(lightSphereModel, lightPosition, 1.0F, WHITE);
 
-		// Draw the 3D cube using mesh with lighting shader
-		Vector3 cubePosition = Vector3{0.0F, 1.0F, 0.0F};
-		DrawModel(cubeModel, cubePosition, 1.0F, WHITE);
-		DrawModel(cubeModel, Vector3{-3.0F, -3.0F, 2.0F}, 1.0F, WHITE);
+		// Draw 300 cubes at random spherical positions with lighting shader
+		for (const auto& pos : cubePositions)
+		{
+			DrawModel(cubeModel, pos, 0.5F, WHITE); // Smaller scale to avoid overlap
+		}
 
-		// Draw cylinder using mesh
-		Vector3 cylinderPosition = Vector3{-2.0F, 0.5F, 2.0F}; // Adjusted Y to center it
-		DrawModel(cylinderModel, cylinderPosition, 1.0F, WHITE);
+		for (const auto& pos : cylinderPositions)
+		{
+			DrawModel(cylinderModel, pos, 0.5, WHITE);
+		}
 
-		// Draw sphere using mesh
-		Vector3 spherePosition = Vector3{2.0F, 0.5F, -2.0F};
-		DrawModel(sphereModel, spherePosition, 1.0F, WHITE);
-
-		// Draw light rays/lines to show light direction
-		DrawLine3D(lightPosition, cubePosition, Fade(YELLOW, 0.3F));
-		DrawLine3D(lightPosition, cylinderPosition, Fade(YELLOW, 0.2F));
-		DrawLine3D(lightPosition, spherePosition, Fade(YELLOW, 0.2F));
+		for (const auto& pos : spherePositions)
+		{
+			DrawModel(sphereModel, pos, 0.5F, WHITE);
+		}
 
 		EndMode3D();
 
+		const auto formatted = std::format("3D Scene: {} Cubes {} Cylinders {} Spheres + MSAA + VSYNC", cubePositions.size(),
+										   cylinderPositions.size(), spherePositions.size());
+
 		// Draw UI
-		DrawText("3D Scene with Custom Lighting Shader + MSAA", 10, 10, 20, GRAY);
+		DrawText(formatted.c_str(), 10, 10, 20, GRAY);
 		DrawText("- Left click + drag to manually control orbit", 10, 35, 16, LIGHTGRAY);
 		DrawText("- Mouse wheel to zoom in/out", 10, 55, 16, LIGHTGRAY);
-		DrawText("- Automatic orbit rotation enabled", 10, 75, 16, LIGHTGRAY);
 		DrawText("- Yellow sphere = dynamic light source", 10, 95, 16, LIGHTGRAY);
-		DrawText("- Red cube uses custom shader with specular lighting", 10, 115, 16, LIGHTGRAY);
 		DrawText("- 4x MSAA anti-aliasing for smooth edges", 10, 135, 16, LIGHTGRAY);
 
 		DrawFPS(screenWidth - 95, 10);
