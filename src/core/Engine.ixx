@@ -1,5 +1,6 @@
 module;
 
+#include <flecs.h>
 #include <chrono>
 #include <utility>
 #include <variant>
