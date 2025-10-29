@@ -21,5 +21,3 @@ target_link_libraries(${PROJECT_NAME} PUBLIC
     Pal::Sigslot
     $<IF:$<TARGET_EXISTS:flecs::flecs>,flecs::flecs,flecs::flecs_static>
 )
-
-# target_precompile_headers(${PROJECT_NAME} PUBLIC "<flecs.h>")
