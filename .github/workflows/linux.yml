@@ -20,6 +20,7 @@ jobs:
           - preset: x64-linux-clang-debug
             compiler: clang
             clang-tidy: true
+            doxygen: true
           - preset: x64-linux-llvm-coverage
             compiler: clang
             llvm-coverage: true
@@ -52,6 +53,7 @@ jobs:
           apt upgrade -y
           apt install -y curl tar git zip unzip make autoconf libtool ninja-build cmake
           apt install -y clang-20 clang-tidy-20 clang-format-20 llvm-20-tools g++-15
+          apt install -y doxygen
           update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-15 10
           update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-15 10
           update-alternatives --install /usr/bin/clang clang /usr/bin/clang-20 200
@@ -81,3 +83,7 @@ jobs:
       - name: llvm-coverage
         if: ${{ matrix.config.llvm-coverage }}
         run: cmake --build --preset ${{ matrix.config.preset }} --target llvm-coverage
+
+      - name: doxygen
+        if: ${{ matrix.config.doxygen }}
+        run: cmake --build --preset ${{ matrix.config.preset }} --target doxygen
