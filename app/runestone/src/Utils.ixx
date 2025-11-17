@@ -1,4 +1,5 @@
 /// @file Utils.ixx
+/// @module runestone.utils
 /// @brief Utility type traits and constexpr helpers for compile-time metaprogramming.
 /// @details
 /// This module provides general-purpose utilities used throughout the Runestone engine,

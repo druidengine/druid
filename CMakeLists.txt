@@ -80,4 +80,23 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
             -instr-profile=${CMAKE_BINARY_DIR}/coverage/merged.profdata
             ${LLVM_COV_OBJECTS}
     )
+
+    set(DOXYGEN_IN ${CMAKE_SOURCE_DIR}/docs/doxygen/.doxyfile)
+    set(DOXYGEN_OUT ${CMAKE_BINARY_DIR}/Doxyfile)
+
+    configure_file(${DOXYGEN_IN} ${DOXYGEN_OUT} @ONLY)
+
+    find_program(DOXYGEN_EXECUTABLE doxygen REQUIRED)
+
+    add_custom_target(doxygen
+        COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYGEN_OUT}
+        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+        COMMENT "Generating documentation with Doxygen..."
+        VERBATIM
+    )
+    add_custom_command(
+        TARGET doxygen
+        POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E echo "Documentation generated at: ${CMAKE_BINARY_DIR}/docs/html/index.html"
+    )
 endif()

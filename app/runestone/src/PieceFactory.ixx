@@ -1,3 +1,5 @@
+/// @file PieceFactory.ixx
+/// @module runestone.piecefactory
 module;
 
 #include <cstdint>
@@ -36,6 +38,7 @@ export namespace runestone
 		/// @note Piece type stored in bits 0-2 (0x7).
 		enum class Type : std::uint8_t
 		{
+			/// @cond DOXYGEN_SHOULD_SKIP_THIS
 			// clang-format off
 			Empty = 0,		// 0b000
 			Pawn = 1,		// 0b001
@@ -46,6 +49,7 @@ export namespace runestone
 			King = 6,		// 0b110
 			Size = 7
 			// clang-format on
+			/// @endcond
 		};
 
 		/// @enum Color
@@ -53,11 +57,13 @@ export namespace runestone
 		/// @note Color is stored in bit 3 (0x8).
 		enum class Color : std::uint8_t
 		{
+			/// @cond DOXYGEN_SHOULD_SKIP_THIS
 			// clang-format off
 			White = 0,		// binary: 0b0000 = bit 3 is 0
 			Black = 8,		// binary: 0b1000 = bit 3 is 1
 			Size = 2
 			// clang-format on
+			/// @endcond
 		};
 
 		/// @enum Piece
@@ -65,6 +71,7 @@ export namespace runestone
 		/// @note Piece = Color (bit 3) | PieceType (bits 0-2).
 		enum class Piece : std::uint8_t
 		{
+			/// @cond DOXYGEN_SHOULD_SKIP_THIS
 			// clang-format off
 			Empty = 0,
 			// white pieces (color = 0, so bit 3 = 0)
@@ -83,15 +90,18 @@ export namespace runestone
 			BlackKing = 14,		// 0b1110 = 8 (black) | 6 (king)
 			Size = 15
 			// clang-format on
+			/// @endcond
 		};
 
 		/// @enum Error
 		/// @brief Represents a specific error thrown when calling piece factory utility functions.
 		enum class Error : std::uint8_t
 		{
+			/// @cond DOXYGEN_SHOULD_SKIP_THIS
 			InvalidCharacter,
 			InvalidPiece,
 			InvalidTypeOrColor
+			/// @endcond
 		};
 
 		/// @brief Create a piece from a type and color.
