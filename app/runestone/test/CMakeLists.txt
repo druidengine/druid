@@ -5,6 +5,7 @@ project_add_executable(${PROJECT_NAME})
 target_sources(${PROJECT_NAME} PRIVATE
     ChessBoard.test.cpp
     ChessPiece.test.cpp
+    Move.test.cpp
 )
 
 find_package(GTest CONFIG REQUIRED)
