@@ -304,12 +304,11 @@ export namespace runestone
 		/// @note Piece = Color (bit 3) | Type (bits 0-2).
 		enum class UnderlyingType : std::uint8_t
 		{
-			// clang-format off
 			Empty = 0,
 			// white pieces (color = 0, so bit 3 = 0)
-			WhitePawn = 1,		// 0b0001 = 0 (white) | 1 (pawn)
-			WhiteKnight = 2,	// 0b0010 = 0 (white) | 2 (knight)
-			WhiteBishop = 3,	// 0b0011 = 0 (white) | 3 (bishop)
+			WhitePawn = 1,		                            // 0b0001 = 0 (white) | 1 (pawn)
+			WhiteKnight = 2,	                             // 0b0010 = 0 (white) | 2 (knight)
+			WhiteBishop = 3,	            // 0b0011 = 0 (white) | 3 (bishop)
 			WhiteRook = 4,		// 0b0100 = 0 (white) | 4 (rook)
 			WhiteQueen = 5,		// 0b0101 = 0 (white) | 5 (queen)
 			WhiteKing = 6,		// 0b0110 = 0 (white) | 6 (king)
@@ -320,7 +319,6 @@ export namespace runestone
 			BlackRook = 12,		// 0b1100 = 8 (black) | 4 (rook)
 			BlackQueen = 13,	// 0b1101 = 8 (black) | 5 (queen)
 			BlackKing = 14,		// 0b1110 = 8 (black) | 6 (king)
-						  // clang-format on
 		};
 		/// @brief Bit mask for extracting piece type (bits 0-2).
 		static constexpr auto HexSeven = 0x7U;
