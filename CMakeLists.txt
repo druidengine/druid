@@ -82,6 +82,26 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
     )
 endif()
 
+find_program(CLANG_FORMAT_EXECUTABLE clang-format QUIET)
+if(CLANG_FORMAT_EXECUTABLE)
+    file(GLOB_RECURSE SOURCE_FILES CONFIGURE_DEPENDS
+        ${CMAKE_SOURCE_DIR}/app/*
+        ${CMAKE_SOURCE_DIR}/include/*
+        ${CMAKE_SOURCE_DIR}/src/*
+    )
+
+    list(FILTER SOURCE_FILES INCLUDE REGEX ".*\\.(cpp|h|ixx)$")
+
+    add_custom_target(clang-format
+        COMMAND ${CLANG_FORMAT_EXECUTABLE} -i ${SOURCE_FILES}
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+        COMMENT "Running clang-format"
+        VERBATIM
+    )
+else()
+    message(WARNING "Clang-format executable not found - clang-format target will be skipped.")
+endif()
+
 find_program(DOXYGEN_EXECUTABLE doxygen QUIET)
 if(DOXYGEN_EXECUTABLE)
     set(DOXYGEN_IN ${CMAKE_SOURCE_DIR}/docs/doxygen/.doxyfile)

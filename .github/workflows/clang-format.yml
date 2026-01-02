@@ -4,11 +4,12 @@ on:
   push:
     branches-ignore: ["main"]
     paths:
-      - "**/*.cpp"
-      - "**/*.h"
-      - "**/*.ixx"
+      - "app/**"
+      - "include/**"
+      - "src/**"
       - ".clang-format"
       - ".clang-format-ignore"
+      - ".github/workflows/clang-format.yml"
 
 permissions:
   contents: write
@@ -19,33 +20,59 @@ concurrency:
 
 jobs:
   format:
-    # Prevent infinite loops from the bot’s own formatting commit
     if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
-
     container: ubuntu:25.10
+
+    strategy:
+      matrix:
+        config:
+          - preset: x64-linux-clang-debug
+            compiler: clang
+            clang-format: true
+
+    env:
+      VCPKG_DEFAULT_BINARY_CACHE: ${{ github.workspace }}/.vcpkg_cache
+      VCPKG_BINARY_SOURCES: "default"
 
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
+      - name: vcpkg-cache-directory
+        shell: bash
+        run: mkdir -p "$VCPKG_DEFAULT_BINARY_CACHE"
+
+      - name: vcpkg-cache-restore
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.VCPKG_DEFAULT_BINARY_CACHE }}
+          key: vcpkg-${{ matrix.config.compiler }}-${{ hashFiles('vcpkg.json') }}
+          restore-keys: |
+            vcpkg-${{ matrix.config.compiler }}-
+
       - name: install-tools
         shell: bash
         run: |
-          set -euo pipefail
-          apt-get update -y
-          apt-get install -y git
+          apt update -y
+          apt upgrade -y
+          apt install -y curl tar git zip unzip make autoconf libtool ninja-build cmake
+          apt install -y clang-20 clang-format-20
+          update-alternatives --install /usr/bin/clang clang /usr/bin/clang-20 200
+          update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-20 200
+          update-alternatives --install /usr/bin/clang-format clang-format /usr/bin/clang-format-20 200
 
-      - name: run-clang-format-on-all-files
-        shell: bash
+      - name: install-raylib-dependencies
         run: |
-          set -euo pipefail
+          apt install -y libxinerama-dev libxcursor-dev xorg-dev libglu1-mesa-dev pkg-config libgl1-mesa-dev libx11-dev libxrandr-dev
 
-          echo "Formatting ALL tracked source files on this branch..."
-          git ls-files -z -- \
-            '*.cpp' '*.h' '*.ixx' \
-            | xargs -0 -r clang-format -i
+      - name: cmake-configure
+        run: cmake --preset ${{ matrix.config.preset }}
+
+      - name: clang-format
+        if: ${{ matrix.config.clang-format }}
+        run: cmake --build --preset ${{ matrix.config.preset }} --target clang-format
 
       - name: commit-and-push
         shell: bash
@@ -62,6 +89,4 @@ jobs:
 
           git add -A
           git commit -m "chore: clang-format"
-
-          # Push back to the same branch even if checkout is detached
           git push origin "HEAD:${{ github.ref_name }}"
