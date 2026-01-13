@@ -15,13 +15,15 @@ import druid.graphics.Color;
 import druid.graphics.Node;
 import druid.graphics.NodeRectangle;
 import druid.graphics.NodeText;
-import druid.raylib.Window;
+import druid.raylib.Renderer;
+import druid.sdl.Window;
 
 auto main() -> int
 try
 {
 	druid::core::Engine engine;
-	auto& window = engine.create_service<druid::raylib::Window>();
+	auto& window = engine.create_service<druid::sdl::Window>();
+	window.set_renderer(std::make_unique<druid::raylib::Renderer>());
 
 	// NOLINTBEGIN
 

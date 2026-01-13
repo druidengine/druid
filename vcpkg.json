@@ -9,6 +9,7 @@
     "gtest",
     "magic-enum",
     "ms-gsl",
-    "raylib"
+    "raylib",
+    "sdl3"
   ]
 }
