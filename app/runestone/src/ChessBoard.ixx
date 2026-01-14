@@ -299,60 +299,60 @@ export namespace runestone
 		/// @{
 
 		/// @brief Represents the squares on a chessboard for the A file.
-		static constexpr squares AFile = 0x0101010101010101ULL;
+		static constexpr squares AFile{0x0101010101010101ULL};
 		/// @brief Represents the squares on a chessboard for the B file.
-		static constexpr squares BFile = AFile << 1U;
+		static constexpr squares BFile{AFile << 1U};
 		/// @brief Represents the squares on a chessboard for the C file.
-		static constexpr squares CFile = AFile << 2U;
+		static constexpr squares CFile{AFile << 2U};
 		/// @brief Represents the squares on a chessboard for the D file.
-		static constexpr squares DFile = AFile << 3U;
+		static constexpr squares DFile{AFile << 3U};
 		/// @brief Represents the squares on a chessboard for the E file.
-		static constexpr squares EFile = AFile << 4U;
+		static constexpr squares EFile{AFile << 4U};
 		/// @brief Represents the squares on a chessboard for the F file.
-		static constexpr squares FFile = AFile << 5U;
+		static constexpr squares FFile{AFile << 5U};
 		/// @brief Represents the squares on a chessboard for the G file.
-		static constexpr squares GFile = AFile << 6U;
+		static constexpr squares GFile{AFile << 6U};
 		/// @brief Represents the squares on a chessboard for the H file.
-		static constexpr squares HFile = AFile << 7U;
+		static constexpr squares HFile{AFile << 7U};
 
 		/// @brief Represents the squares on a chessboard for the 1st Rank.
-		static constexpr squares Rank1 = 0xFFULL;
+		static constexpr squares Rank1{0xFFULL};
 		/// @brief Represents the squares on a chessboard for the 2nd Rank.
-		static constexpr squares Rank2 = Rank1 << (8 * 1U);
+		static constexpr squares Rank2{Rank1 << (8 * 1U)};
 		/// @brief Represents the squares on a chessboard for the 3rd Rank.
-		static constexpr squares Rank3 = Rank1 << (8 * 2U);
+		static constexpr squares Rank3{Rank1 << (8 * 2U)};
 		/// @brief Represents the squares on a chessboard for the 4th Rank.
-		static constexpr squares Rank4 = Rank1 << (8 * 3U);
+		static constexpr squares Rank4{Rank1 << (8 * 3U)};
 		/// @brief Represents the squares on a chessboard for the 5th Rank.
-		static constexpr squares Rank5 = Rank1 << (8 * 4U);
+		static constexpr squares Rank5{Rank1 << (8 * 4U)};
 		/// @brief Represents the squares on a chessboard for the 6th Rank.
-		static constexpr squares Rank6 = Rank1 << (8 * 5U);
+		static constexpr squares Rank6{Rank1 << (8 * 5U)};
 		/// @brief Represents the squares on a chessboard for the 7th Rank.
-		static constexpr squares Rank7 = Rank1 << (8 * 6U);
+		static constexpr squares Rank7{Rank1 << (8 * 6U)};
 		/// @brief Represents the squares on a chessboard for the 8th Rank.
-		static constexpr squares Rank8 = Rank1 << (8 * 7U);
+		static constexpr squares Rank8{Rank1 << (8 * 7U)};
 
 		/// @brief Represents a chessboard's squares for all files except File A.
-		static constexpr squares NotAFile = ~AFile;
+		static constexpr squares NotAFile{~AFile};
 		/// @brief Represents a chessboard's squares for all files except File H.
-		static constexpr squares NotHFile = ~HFile;
+		static constexpr squares NotHFile{~HFile};
 		/// @brief Represents a chessboard's squares for all ranks except Rank 1.
-		static constexpr squares NotRank1 = ~Rank1;
+		static constexpr squares NotRank1{~Rank1};
 		/// @brief Represents a chessboard's squares for all ranks except Rank 8.
-		static constexpr squares NotRank8 = ~Rank8;
+		static constexpr squares NotRank8{~Rank8};
 
 		/// @brief Represents an empty chessboard (zero squares are occupied).
-		static constexpr squares Empty = 0x0000000000000000ULL;
+		static constexpr squares Empty{0x0000000000000000ULL};
 		/// @brief Represents a full chessboard (one piece occupies every square).
-		static constexpr squares Full = 0xFFFFFFFFFFFFFFFFULL;
+		static constexpr squares Full{0xFFFFFFFFFFFFFFFFULL};
 		/// @brief Represents a chessboard where every light square has a piece occupying it.
-		static constexpr squares LightSquares = 0x55AA55AA55AA55AAULL;
+		static constexpr squares LightSquares{0x55AA55AA55AA55AAULL};
 		/// @brief Represents a chessboard where every dark square has a piece occupying it.
-		static constexpr squares DarkSquares = 0xAA55AA55AA55AA55ULL;
+		static constexpr squares DarkSquares{0xAA55AA55AA55AA55ULL};
 		/// @brief Represents a chessboard where every square along the diagonal has a piece occupying it.
-		static constexpr squares DiagonalA1H8 = 0x8040201008040201ULL;
+		static constexpr squares DiagonalA1H8{0x8040201008040201ULL};
 		/// @brief Represents a chessboard where every square along the diagonal has a piece occupying it.
-		static constexpr squares AntiDiagonalH1A8 = 0x0102040810204080ULL;
+		static constexpr squares AntiDiagonalH1A8{0x0102040810204080ULL};
 		/// @}
 
 	private:
