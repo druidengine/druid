@@ -2,6 +2,7 @@ module;
 
 #include <SDL3/SDL.h>
 #include <chrono>
+#include <iostream>
 
 export module druid.sdl.Window;
 
@@ -260,19 +261,40 @@ export namespace druid::sdl
 		{
 			if (!SDL_Init(SDL_INIT_VIDEO))
 			{
-				// Handle error
+				std::cerr << "SDL_Init failed: " << SDL_GetError() << "\n";
 				return;
 			}
 
-			window_ = SDL_CreateWindow(get_title().data(), width_, height_, SDL_WINDOW_RESIZABLE);
+			// Set OpenGL attributes before creating window
+			SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+			SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+			SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+			SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+
+			window_ = SDL_CreateWindow(get_title().data(), width_, height_, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
 
 			if (!window_)
 			{
+				std::cerr << "SDL_CreateWindow failed: " << SDL_GetError() << "\n";
 				SDL_Quit();
 				return;
 			}
 
+			// Create OpenGL context
+			gl_context_ = SDL_GL_CreateContext(window_);
+			if (!gl_context_)
+			{
+				std::cerr << "SDL_GL_CreateContext failed: " << SDL_GetError() << "\n";
+				SDL_DestroyWindow(window_);
+				SDL_Quit();
+				return;
+			}
+
+			// Disable V-Sync
+			SDL_GL_SetSwapInterval(0);
+
 			last_title_ = get_title();
+			std::cout << "SDL Window and OpenGL context created successfully\n";
 		}
 
 		/// @brief Destroy the SDL3 window service.
@@ -280,6 +302,11 @@ export namespace druid::sdl
 		/// Closes the SDL3 window and releases all resources.
 		~Window() override
 		{
+			if (gl_context_)
+			{
+				SDL_GL_DestroyContext(gl_context_);
+			}
+
 			if (window_)
 			{
 				SDL_DestroyWindow(window_);
@@ -343,7 +370,7 @@ export namespace druid::sdl
 
 		/// @brief End-of-frame hook.
 		///
-		/// Renders the scene graph using the SDL3 renderer.
+		/// Renders the scene graph using the renderer and swaps the window buffers.
 		auto update_end() -> void override
 		{
 			// Render the scene
@@ -352,11 +379,15 @@ export namespace druid::sdl
 				renderer->begin(druid::graphics::Color::Black);
 				root_node().draw(*renderer);
 				renderer->end();
+				
+				// Swap buffers to display the rendered frame
+				SDL_GL_SwapWindow(window_);
 			}
 		}
 
 	private:
 		SDL_Window* window_{nullptr};
+		SDL_GLContext gl_context_{nullptr};
 		std::string last_title_{DefaultTitle};
 		int width_{DefaultWidth};
 		int height_{DefaultHeight};
