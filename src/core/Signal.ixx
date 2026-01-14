@@ -1,6 +1,7 @@
 module;
 
 #include <functional>
+#include <vector>
 
 export module druid.core.Signal;
 
@@ -47,9 +48,9 @@ export namespace druid::core
 		/// @tparam Callback Callable type compatible with `R(Args...)`.
 		/// @param callback Callable object to store and invoke.
 		template <typename Callback>
-		auto connect(Callback&& callback) -> void
+		auto connect(Callback callback) -> void
 		{
-			signal_ = std::forward<Callback>(callback);
+			signals_.emplace_back(std::forward<Callback>(callback));
 		}
 
 		/// @brief Invoke the connected callback, if any.
@@ -60,14 +61,16 @@ export namespace druid::core
 		/// @param args Arguments forwarded to the connected callback.
 		auto operator()(Args... args) const noexcept -> void
 		{
-			if (!signal_)
-			{
-				return;
-			}
-
 			try
 			{
-				signal_(std::forward<Args>(args)...);
+				for (auto&& signal : signals_) {
+
+					if(!signal) {
+						continue;
+					}
+
+					signal(std::forward<Args>(args)...);
+				}
 			}
 			catch (const std::exception& e)
 			{
@@ -81,6 +84,6 @@ export namespace druid::core
 		/// @brief Stored callback function.
 		///
 		/// An empty `std::function` indicates that no callback is connected.
-		std::function<R(Args...)> signal_{};
+		std::vector<std::function<R(Args...)>> signals_{};
 	};
 }

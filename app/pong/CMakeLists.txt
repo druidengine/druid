@@ -11,4 +11,11 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     druid-core
     druid-graphics
     druid-raylib
+    druid-sdl
+    druid-skia
 )
+
+# Suppress DLL interface warnings from Skia headers (C4251, C4275)
+if(MSVC)
+    target_compile_options(${PROJECT_NAME} PRIVATE /wd4251 /wd4275)
+endif()

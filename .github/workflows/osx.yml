@@ -38,6 +38,10 @@ jobs:
           brew install llvm@20 ninja cmake doxygen
           echo "/opt/homebrew/opt/llvm@20/bin" >> $GITHUB_PATH
 
+      - name: install-dependencies-skia
+        run: |
+          brew install autoconf autoconf-archive automake libtool
+
       - name: cmake-configure
         run: cmake --preset ${{ matrix.config.preset }}
 

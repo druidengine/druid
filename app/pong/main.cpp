@@ -15,13 +15,15 @@ import druid.graphics.Color;
 import druid.graphics.Node;
 import druid.graphics.NodeRectangle;
 import druid.graphics.NodeText;
-import druid.raylib.Window;
+import druid.skia.Renderer;
+import druid.sdl.Window;
 
 auto main() -> int
 try
 {
 	druid::core::Engine engine;
-	auto& window = engine.create_service<druid::raylib::Window>();
+	auto& window = engine.create_service<druid::sdl::Window>();
+	window.set_renderer(std::make_unique<druid::skia::Renderer>(1280, 720));
 
 	// NOLINTBEGIN
 
@@ -30,8 +32,14 @@ try
 
 	auto& root = window.root_node();
 
+	auto& fpsCounter = root.create_node<druid::graphics::NodeText>();
+	fpsCounter.set_position({10.0F, 20.0F});
+	fpsCounter.set_text("FPS: 0");
+	fpsCounter.set_font_size(16);
+	fpsCounter.set_color(druid::graphics::Color::White);
+
 	auto& title = root.create_node<druid::graphics::NodeText>();
-	title.set_position({width * 0.42F, 0.0F});
+	title.set_position({width * 0.42F, 30.0F});  // Move down from top
 	title.set_text("DRUID PONG (C++26)");
 	title.set_font_size(24);
 	title.set_color(druid::graphics::Color::White);
@@ -84,6 +92,27 @@ try
 	auto score_player2 = 0;
 	auto score_player1_str = std::string{};
 	auto score_player2_str = std::string{};
+
+	// FPS tracking
+	auto last_fps_update = std::chrono::steady_clock::now();
+	auto frame_count = 0;
+	auto fps_text = std::string{};
+
+	engine.on_update([&](auto) {
+		// Update FPS counter
+		frame_count++;
+		const auto now = std::chrono::steady_clock::now();
+		const auto fps_elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - last_fps_update).count();
+		
+		if (fps_elapsed >= 500) // Update every 500ms
+		{
+			const auto fps = static_cast<int>((frame_count * 1000.0) / fps_elapsed);
+			fps_text = "FPS: " + std::to_string(fps);
+			fpsCounter.set_text(fps_text);
+			frame_count = 0;
+			last_fps_update = now;
+		}
+	});
 
 	engine.on_update_fixed(
 		[&](std::chrono::steady_clock::duration dt)
