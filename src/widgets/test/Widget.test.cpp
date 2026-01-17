@@ -93,10 +93,10 @@ TEST(Widget, add_widget)
 	parent->add_widget(std::move(child));
 
 	// Check that child was added to Object children
-	EXPECT_EQ(parent->children().size(), 1U);
+	EXPECT_EQ(std::size(parent->children()), 1U);
 
 	// Check that child was added to widget children
-	EXPECT_EQ(parent->get_children_widget().size(), 1U);
+	EXPECT_EQ(std::size(parent->children_widget()), 1U);
 
 	// Verify it's the correct child
 	auto* found = parent->find_child("child");
@@ -112,11 +112,11 @@ TEST(Widget, add_widget_nullptr)
 	// Adding nullptr should be safe (no-op)
 	parent->add_widget(nullptr);
 
-	EXPECT_EQ(parent->children().size(), 0U);
-	EXPECT_EQ(parent->get_children_widget().size(), 0U);
+	EXPECT_EQ(std::size(parent->children()), 0U);
+	EXPECT_EQ(std::size(parent->children_widget()), 0U);
 }
 
-TEST(Widget, get_children_widget)
+TEST(Widget, children_widget)
 {
 	Engine engine;
 	auto parent = std::make_unique<Widget>(engine);
@@ -128,8 +128,8 @@ TEST(Widget, get_children_widget)
 		parent->add_widget(std::move(child));
 	}
 
-	const auto& widget_children = parent->get_children_widget();
-	EXPECT_EQ(widget_children.size(), 3U);
+	const auto& widget_children = parent->children_widget();
+	EXPECT_EQ(std::size(widget_children), 3U);
 }
 
 TEST(Widget, get_widget_at_self)
@@ -142,7 +142,7 @@ TEST(Widget, get_widget_at_self)
 
 	// Point inside widget with no children should return self
 	const auto point = glm::vec2{150.0F, 150.0F};
-	const auto* found = widget->get_widget_at(point);
+	const auto* found = widget->widget_at(point);
 
 	ASSERT_NE(found, nullptr);
 	EXPECT_EQ(found, widget.get());
@@ -158,7 +158,7 @@ TEST(Widget, get_widget_at_outside)
 
 	// Point outside widget should return nullptr
 	const auto point = glm::vec2{50.0F, 50.0F};
-	const auto* found = widget->get_widget_at(point);
+	const auto* found = widget->widget_at(point);
 
 	EXPECT_EQ(found, nullptr);
 }
@@ -180,7 +180,7 @@ TEST(Widget, get_widget_at_child)
 
 	// Point inside child should return child
 	const auto point = glm::vec2{150.0F, 150.0F};
-	const auto* found = parent->get_widget_at(point);
+	const auto* found = parent->widget_at(point);
 
 	ASSERT_NE(found, nullptr);
 	EXPECT_EQ(found, child_ptr);
@@ -202,7 +202,7 @@ TEST(Widget, get_widget_at_parent)
 
 	// Point inside parent but outside child should return parent
 	const auto point = glm::vec2{50.0F, 50.0F};
-	const auto* found = parent->get_widget_at(point);
+	const auto* found = parent->widget_at(point);
 
 	ASSERT_NE(found, nullptr);
 	EXPECT_EQ(found, parent.get());
@@ -231,7 +231,7 @@ TEST(Widget, get_widget_at_nested_children)
 
 	// Point inside grandchild should return grandchild
 	const auto point = glm::vec2{175.0F, 175.0F};
-	const auto* found = parent->get_widget_at(point);
+	const auto* found = parent->widget_at(point);
 
 	ASSERT_NE(found, nullptr);
 	EXPECT_EQ(found, grandchild_ptr);
@@ -263,7 +263,7 @@ TEST(Widget, get_widget_at_overlapping_children)
 
 	// Point in overlapping region should return the last added child (child2)
 	const auto point = glm::vec2{175.0F, 175.0F};
-	const auto* found = parent->get_widget_at(point);
+	const auto* found = parent->widget_at(point);
 
 	ASSERT_NE(found, nullptr);
 	EXPECT_EQ(found, child2_ptr);
@@ -282,7 +282,7 @@ TEST(Widget, get_widget_at_const)
 
 	// Point inside widget
 	const auto point = glm::vec2{150.0F, 150.0F};
-	const auto* found = const_widget->get_widget_at(point);
+	const auto* found = const_widget->widget_at(point);
 
 	ASSERT_NE(found, nullptr);
 	EXPECT_EQ(found, const_widget);
@@ -298,7 +298,7 @@ TEST(Widget, child_removal_updates_widget_children)
 
 	parent->add_widget(std::move(child));
 
-	EXPECT_EQ(parent->get_children_widget().size(), 1U);
+	EXPECT_EQ(std::size(parent->children_widget()), 1U);
 
 	// Remove the child
 	auto* child_obj = parent->find_child("child");
@@ -306,8 +306,8 @@ TEST(Widget, child_removal_updates_widget_children)
 	auto removed = child_obj->remove();
 
 	// Widget children should be updated
-	EXPECT_EQ(parent->get_children_widget().size(), 0U);
-	EXPECT_EQ(parent->children().size(), 0U);
+	EXPECT_EQ(std::size(parent->children_widget()), 0U);
+	EXPECT_EQ(std::size(parent->children()), 0U);
 }
 
 TEST(Widget, mixed_children_only_widgets_tracked)
@@ -326,10 +326,20 @@ TEST(Widget, mixed_children_only_widgets_tracked)
 	parent->add_child(std::move(object_child));
 
 	// Should have 2 Object children
-	EXPECT_EQ(parent->children().size(), 2U);
+	EXPECT_EQ(std::size(parent->children()), 2U);
 
 	// Should have only 1 Widget child
-	EXPECT_EQ(parent->get_children_widget().size(), 1U);
+	EXPECT_EQ(std::size(parent->children_widget()), 1U);
+
+	// Remove all children (avoid modifying collection during iteration)
+	while (!std::empty(parent->children()))
+	{
+		auto c = parent->children().front()->remove();
+		EXPECT_NE(c, nullptr);
+	}
+
+	EXPECT_TRUE(std::empty(parent->children()));
+	EXPECT_TRUE(std::empty(parent->children_widget()));
 }
 
 // NOLINTEND(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)

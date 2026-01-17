@@ -108,42 +108,9 @@ export namespace druid::widgets
 
 		/// @brief Get the list of widget children.
 		/// @return Read-only reference to the vector of widget children.
-		[[nodiscard]] auto get_children_widget() const noexcept -> const std::vector<Widget*>&
+		[[nodiscard]] auto children_widget() const noexcept -> const std::vector<Widget*>&
 		{
 			return children_widget_;
-		}
-
-		/// @brief Find the widget child that contains the given point.
-		///
-		/// Performs a depth-first search through the widget hierarchy to find the
-		/// deepest (most specific) widget that contains the point. If multiple children
-		/// contain the point, the last one in the children list takes precedence.
-		///
-		/// @param point The point to test (x, y).
-		/// @return Pointer to the widget that contains the point, or nullptr if no widget
-		///         contains the point. Returns `this` if no child contains the point but
-		///         this widget does.
-		[[nodiscard]] auto widget_at(glm::vec2 point) -> Widget*
-		{
-			// Point is not within this widget or any of its children
-			if (!contains(point))
-			{
-				return nullptr;
-			}
-
-			// Check widget children first (depth-first search)
-			// Iterate in reverse to prioritize later children (drawn on top)
-			for (auto* widget : std::views::reverse(children_widget_))
-			{
-				// Recursively check if the child or any of its descendants contains the point
-				if (auto* found = widget->widget_at(point))
-				{
-					return found;
-				}
-			}
-
-			// If no child contains the point, check if this widget does
-			return this;
 		}
 
 		/// @brief Find the widget child that contains the given point (const version).
@@ -156,7 +123,7 @@ export namespace druid::widgets
 		/// @return Pointer to the widget that contains the point, or nullptr if no widget
 		///         contains the point. Returns `this` if no child contains the point but
 		///         this widget does.
-		[[nodiscard]] auto get_widget_at(glm::vec2 point) const -> const Widget*
+		[[nodiscard]] auto widget_at(glm::vec2 point) const -> const Widget*
 		{
 			// Point is not within this widget or any of its children
 			if (!contains(point))
@@ -169,13 +136,13 @@ export namespace druid::widgets
 			for (const auto* widget : std::views::reverse(children_widget_))
 			{
 				// Recursively check if the child or any of its descendants contains the point
-				if (const auto* found = widget->get_widget_at(point))
+				if (const auto* found = widget->widget_at(point))
 				{
 					return found;
 				}
 			}
 
-			// If no child contains the point, check if this widget does
+			// If no child contains the point this widget does.
 			return this;
 		}
 
