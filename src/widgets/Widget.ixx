@@ -1,5 +1,9 @@
 module;
 
+#include <algorithm>
+#include <memory>
+#include <ranges>
+#include <vector>
 #include <glm/glm.hpp>
 
 export module druid.widgets.Widget;
@@ -23,6 +27,14 @@ export namespace druid::widgets
 		/// @param engine Owning engine instance.
 		explicit Widget(core::Engine& engine) : core::Object(engine)
 		{
+			on_child_removed(
+				[this](core::Object* child)
+				{
+					if (auto* widget = dynamic_cast<Widget*>(child))
+					{
+						std::erase(children_widget_, widget);
+					}
+				});
 		}
 
 		/// @brief Virtual destructor.
@@ -75,6 +87,33 @@ export namespace druid::widgets
 			       point.y <= position_.y + size_.y;
 		}
 
+		/// @brief Add a widget as a child of this widget.
+		///
+		/// This method stores the widget pointer for efficient widget-specific operations
+		/// (like hit testing) and transfers ownership to the base Object hierarchy.
+		///
+		/// @param widget Unique pointer to the widget to add as a child.
+		auto add_widget(std::unique_ptr<Widget> widget) -> void
+		{
+			if (widget == nullptr)
+			{
+				return;
+			}
+
+            children_widget_.emplace_back(widget.get());
+
+			// Transfer ownership to the base Object class
+			// The widget will be automatically added to children_widget_ via the on_child_added signal
+			add_child(std::move(widget));
+		}
+
+		/// @brief Get the list of widget children.
+		/// @return Read-only reference to the vector of widget children.
+		[[nodiscard]] auto get_children_widget() const noexcept -> const std::vector<Widget*>&
+		{
+			return children_widget_;
+		}
+
 		/// @brief Find the widget child that contains the given point.
 		///
 		/// Performs a depth-first search through the widget hierarchy to find the
@@ -85,32 +124,27 @@ export namespace druid::widgets
 		/// @return Pointer to the widget that contains the point, or nullptr if no widget
 		///         contains the point. Returns `this` if no child contains the point but
 		///         this widget does.
-		[[nodiscard]] auto get_widget_at(glm::vec2 point) -> Widget*
+		[[nodiscard]] auto widget_at(glm::vec2 point) -> Widget*
 		{
-			// Check children first (depth-first search)
-			// Iterate in reverse to prioritize later children (drawn on top)
-			const auto& child_list = children();
-			for (auto i = child_list.size(); i > 0; --i)
+			// Point is not within this widget or any of its children
+			if (!contains(point))
 			{
-				// Try to cast child to Widget
-				if (auto* child_widget = dynamic_cast<Widget*>(child_list[i - 1].get()))
+				return nullptr;
+			}
+
+			// Check widget children first (depth-first search)
+			// Iterate in reverse to prioritize later children (drawn on top)
+			for (auto* widget : std::views::reverse(children_widget_))
+			{
+				// Recursively check if the child or any of its descendants contains the point
+				if (auto* found = widget->widget_at(point))
 				{
-					// Recursively check if the child or any of its descendants contains the point
-					if (auto* found = child_widget->get_widget_at(point))
-					{
-						return found;
-					}
+					return found;
 				}
 			}
 
-			// If no child contains the point, check if this widget does
-			if (contains(point))
-			{
-				return this;
-			}
-
-			// Point is not within this widget or any of its children
-			return nullptr;
+            // If no child contains the point, check if this widget does
+			return this;
 		}
 
 		/// @brief Find the widget child that contains the given point (const version).
@@ -125,34 +159,30 @@ export namespace druid::widgets
 		///         this widget does.
 		[[nodiscard]] auto get_widget_at(glm::vec2 point) const -> const Widget*
 		{
-			// Check children first (depth-first search)
-			// Iterate in reverse to prioritize later children (drawn on top)
-			const auto& child_list = children();
-			for (auto i = child_list.size(); i > 0; --i)
+			// Point is not within this widget or any of its children
+			if (!contains(point))
 			{
-				// Try to cast child to Widget
-				if (const auto* child_widget = dynamic_cast<const Widget*>(child_list[i - 1].get()))
+				return nullptr;
+			}
+
+			// Check widget children first (depth-first search)
+			// Iterate in reverse to prioritize later children (drawn on top)
+			for (const auto* widget : std::views::reverse(children_widget_))
+			{
+				// Recursively check if the child or any of its descendants contains the point
+				if (const auto* found = widget->get_widget_at(point))
 				{
-					// Recursively check if the child or any of its descendants contains the point
-					if (const auto* found = child_widget->get_widget_at(point))
-					{
-						return found;
-					}
+					return found;
 				}
 			}
 
-			// If no child contains the point, check if this widget does
-			if (contains(point))
-			{
-				return this;
-			}
-
-			// Point is not within this widget or any of its children
-			return nullptr;
+            // If no child contains the point, check if this widget does
+			return this;
 		}
 
 	private:
-		glm::vec2 position_{0.0F, 0.0F}; ///< Top-left corner of the bounding box.
-		glm::vec2 size_{0.0F, 0.0F};     ///< Size of the bounding box (width, height).
+		glm::vec2 position_{0.0F, 0.0F};
+		glm::vec2 size_{0.0F, 0.0F};     
+		std::vector<Widget*> children_widget_;
 	};
 }
