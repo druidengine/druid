@@ -28,7 +28,7 @@ TEST(Widget, position)
 	Engine engine;
 	auto widget = std::make_unique<Widget>(engine);
 
-	glm::vec2 pos{100.0F, 200.0F};
+	const auto pos = glm::vec2{100.0F, 200.0F};
 	widget->set_position(pos);
 
 	EXPECT_EQ(widget->get_position().x, 100.0F);
@@ -40,7 +40,7 @@ TEST(Widget, size)
 	Engine engine;
 	auto widget = std::make_unique<Widget>(engine);
 
-	glm::vec2 size{150.0F, 250.0F};
+	const auto size = glm::vec2{150.0F, 250.0F};
 	widget->set_size(size);
 
 	EXPECT_EQ(widget->get_size().x, 150.0F);
@@ -56,7 +56,7 @@ TEST(Widget, contains_point_inside)
 	widget->set_size({200.0F, 150.0F});
 
 	// Point inside the widget
-	glm::vec2 point{150.0F, 150.0F};
+	const auto point = glm::vec2{150.0F, 150.0F};
 	EXPECT_TRUE(widget->contains(point));
 
 	// Point at the edges (should be inside)
@@ -141,8 +141,8 @@ TEST(Widget, get_widget_at_self)
 	widget->set_size({200.0F, 150.0F});
 
 	// Point inside widget with no children should return self
-	glm::vec2 point{150.0F, 150.0F};
-	auto* found = widget->get_widget_at(point);
+	const auto point = glm::vec2{150.0F, 150.0F};
+	const auto* found = widget->get_widget_at(point);
 
 	ASSERT_NE(found, nullptr);
 	EXPECT_EQ(found, widget.get());
@@ -157,8 +157,8 @@ TEST(Widget, get_widget_at_outside)
 	widget->set_size({200.0F, 150.0F});
 
 	// Point outside widget should return nullptr
-	glm::vec2 point{50.0F, 50.0F};
-	auto* found = widget->get_widget_at(point);
+	const auto point = glm::vec2{50.0F, 50.0F};
+	const auto* found = widget->get_widget_at(point);
 
 	EXPECT_EQ(found, nullptr);
 }
@@ -179,8 +179,8 @@ TEST(Widget, get_widget_at_child)
 	parent->add_widget(std::move(child));
 
 	// Point inside child should return child
-	glm::vec2 point{150.0F, 150.0F};
-	auto* found = parent->get_widget_at(point);
+	const auto point = glm::vec2{150.0F, 150.0F};
+	const auto* found = parent->get_widget_at(point);
 
 	ASSERT_NE(found, nullptr);
 	EXPECT_EQ(found, child_ptr);
@@ -201,8 +201,8 @@ TEST(Widget, get_widget_at_parent)
 	parent->add_widget(std::move(child));
 
 	// Point inside parent but outside child should return parent
-	glm::vec2 point{50.0F, 50.0F};
-	auto* found = parent->get_widget_at(point);
+	const auto point = glm::vec2{50.0F, 50.0F};
+	const auto* found = parent->get_widget_at(point);
 
 	ASSERT_NE(found, nullptr);
 	EXPECT_EQ(found, parent.get());
@@ -230,8 +230,8 @@ TEST(Widget, get_widget_at_nested_children)
 	parent->add_widget(std::move(child));
 
 	// Point inside grandchild should return grandchild
-	glm::vec2 point{175.0F, 175.0F};
-	auto* found = parent->get_widget_at(point);
+	const auto point = glm::vec2{175.0F, 175.0F};
+	const auto* found = parent->get_widget_at(point);
 
 	ASSERT_NE(found, nullptr);
 	EXPECT_EQ(found, grandchild_ptr);
@@ -262,8 +262,8 @@ TEST(Widget, get_widget_at_overlapping_children)
 	parent->add_widget(std::move(child2));
 
 	// Point in overlapping region should return the last added child (child2)
-	glm::vec2 point{175.0F, 175.0F};
-	auto* found = parent->get_widget_at(point);
+	const auto point = glm::vec2{175.0F, 175.0F};
+	const auto* found = parent->get_widget_at(point);
 
 	ASSERT_NE(found, nullptr);
 	EXPECT_EQ(found, child2_ptr);
@@ -281,7 +281,7 @@ TEST(Widget, get_widget_at_const)
 	const Widget* const_widget = widget.get();
 
 	// Point inside widget
-	glm::vec2 point{150.0F, 150.0F};
+	const auto point = glm::vec2{150.0F, 150.0F};
 	const auto* found = const_widget->get_widget_at(point);
 
 	ASSERT_NE(found, nullptr);
