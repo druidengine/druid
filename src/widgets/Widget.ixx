@@ -1,10 +1,10 @@
 module;
 
 #include <algorithm>
+#include <glm/glm.hpp>
 #include <memory>
 #include <ranges>
 #include <vector>
-#include <glm/glm.hpp>
 
 export module druid.widgets.Widget;
 
@@ -83,8 +83,7 @@ export namespace druid::widgets
 		/// @return True if the point is within the widget's bounds, false otherwise.
 		[[nodiscard]] auto contains(glm::vec2 point) const noexcept -> bool
 		{
-			return point.x >= position_.x && point.x <= position_.x + size_.x && point.y >= position_.y &&
-			       point.y <= position_.y + size_.y;
+			return point.x >= position_.x && point.x <= position_.x + size_.x && point.y >= position_.y && point.y <= position_.y + size_.y;
 		}
 
 		/// @brief Add a widget as a child of this widget.
@@ -100,7 +99,7 @@ export namespace druid::widgets
 				return;
 			}
 
-            children_widget_.emplace_back(widget.get());
+			children_widget_.emplace_back(widget.get());
 
 			// Transfer ownership to the base Object class
 			// The widget will be automatically added to children_widget_ via the on_child_added signal
@@ -143,7 +142,7 @@ export namespace druid::widgets
 				}
 			}
 
-            // If no child contains the point, check if this widget does
+			// If no child contains the point, check if this widget does
 			return this;
 		}
 
@@ -176,13 +175,13 @@ export namespace druid::widgets
 				}
 			}
 
-            // If no child contains the point, check if this widget does
+			// If no child contains the point, check if this widget does
 			return this;
 		}
 
 	private:
 		glm::vec2 position_{0.0F, 0.0F};
-		glm::vec2 size_{0.0F, 0.0F};     
+		glm::vec2 size_{0.0F, 0.0F};
 		std::vector<Widget*> children_widget_;
 	};
 }
