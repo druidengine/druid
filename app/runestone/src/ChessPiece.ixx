@@ -95,7 +95,7 @@ export namespace runestone
 		/// @brief Convert a character to chess piece.
 		/// @param c Character representing a piece ('K'=white king, 'k'=black king, etc.).
 		/// @return Corresponding Piece enum value, or Error::InvalidCharacter.
-		static auto char_to_piece(char c) noexcept -> std::expected<ChessPiece, Error>
+		[[nodiscard]] static auto char_to_piece(char c) noexcept -> std::expected<ChessPiece, Error>
 		{
 			switch (c)
 			{
@@ -157,7 +157,7 @@ export namespace runestone
 		/// @brief Convert chess piece enum to FEN character.
 		/// @param chess_piece Piece enum value to convert.
 		/// @return Corresponding FEN character ('K', 'k', 'P', 'p', etc.) or Error::InvalidInputPiece.
-		static auto piece_to_char(ChessPiece chess_piece) noexcept -> std::expected<char, Error>
+		[[nodiscard]] static auto piece_to_char(ChessPiece chess_piece) noexcept -> std::expected<char, Error>
 		{
 			switch (chess_piece.raw())
 			{
@@ -216,6 +216,9 @@ export namespace runestone
 			}
 		}
 
+		/// @brief Default constructs a chess piece.
+		explicit constexpr ChessPiece() noexcept = default;
+
 		/// @brief Construct a chess piece from a color and type.
 		///
 		/// This constructor encodes the given `Color` and `Type` into the internal
@@ -230,7 +233,7 @@ export namespace runestone
 		/// @param color The color of the piece (ignored when `type == Type::Empty`).
 		/// @param type  The piece type. If `Type::Empty`, the resulting piece becomes
 		///              `UnderlyingType::Empty` regardless of `color`.
-		explicit ChessPiece(Color color, Type type)
+		explicit constexpr ChessPiece(Color color, Type type) noexcept
 		{
 			if (type == Type::Empty)
 			{
@@ -251,21 +254,21 @@ export namespace runestone
 		/// @param chess_piece The other piece to compare with.
 		/// @return `true` if both pieces represent the same color and type;
 		///         `false` otherwise.
-		auto operator==(const ChessPiece& chess_piece) const -> bool
+		[[nodiscard]] auto operator==(const ChessPiece& chess_piece) const -> bool
 		{
 			return raw() == chess_piece.raw() && raw_bits() == chess_piece.raw_bits();
 		}
 
 		/// @brief Get the chess piece type.
 		/// @return The chess piece type.
-		[[nodiscard]] constexpr auto piece_type() const noexcept -> Type
+		[[nodiscard]] constexpr auto type() const noexcept -> Type
 		{
 			return static_cast<Type>(raw_bits() & HexSeven);
 		}
 
 		/// @brief Get the chess piece color.
 		/// @return The chess piece color.
-		[[nodiscard]] auto piece_color() const noexcept -> std::expected<Color, Error>
+		[[nodiscard]] auto color() const noexcept -> std::expected<Color, Error>
 		{
 			if ((raw_bits() & HexSeven) == 0)
 			{
@@ -304,28 +307,53 @@ export namespace runestone
 		/// @note Piece = Color (bit 3) | Type (bits 0-2).
 		enum class UnderlyingType : std::uint8_t
 		{
-			// clang-format off
+			/// @brief Represents no chess piece.
+			/// @note the bit representation: 0bX000
 			Empty = 0,
 			// white pieces (color = 0, so bit 3 = 0)
-			WhitePawn = 1,		// 0b0001 = 0 (white) | 1 (pawn)
-			WhiteKnight = 2,	// 0b0010 = 0 (white) | 2 (knight)
-			WhiteBishop = 3,	// 0b0011 = 0 (white) | 3 (bishop)
-			WhiteRook = 4,		// 0b0100 = 0 (white) | 4 (rook)
-			WhiteQueen = 5,		// 0b0101 = 0 (white) | 5 (queen)
-			WhiteKing = 6,		// 0b0110 = 0 (white) | 6 (king)
+			/// @brief Represents a white pawn.
+			/// @note the bit representation: 0b0001 = 0 (white) | 1 (pawn)
+			WhitePawn = 1,
+			/// @brief Represents a white knight.
+			/// @note the bit representation: 0b0010 = 0 (white) | 2 (knight)
+			WhiteKnight = 2,
+			/// @brief Represents a white bishop.
+			/// @note the bit representation: 0b0011 = 0 (white) | 3 (bishop)
+			WhiteBishop = 3,
+			/// @brief Represents a white rook.
+			/// @note the bit representation: 0b0100 = 0 (white) | 4 (rook)
+			WhiteRook = 4,
+			/// @brief Represents a white queen.
+			/// @note the bit representation: 0b0101 = 0 (white) | 5 (queen)
+			WhiteQueen = 5,
+			/// @brief Represents a white king.
+			/// @note the bit representation: 0b0110 = 0 (white) | 6 (king)
+			WhiteKing = 6,
+
 			// black pieces (color = 8, so bit 3 = 1)
-			BlackPawn = 9,		// 0b1001 = 8 (black) | 1 (pawn)
-			BlackKnight = 10,	// 0b1010 = 8 (black) | 2 (knight)
-			BlackBishop = 11,	// 0b1011 = 8 (black) | 3 (bishop)
-			BlackRook = 12,		// 0b1100 = 8 (black) | 4 (rook)
-			BlackQueen = 13,	// 0b1101 = 8 (black) | 5 (queen)
-			BlackKing = 14,		// 0b1110 = 8 (black) | 6 (king)
-						  // clang-format on
+			/// @brief Represents a black pawn.
+			/// @note the bit representation: 0b1001 = 8 (black) | 1 (pawn)
+			BlackPawn = 9,
+			/// @brief Represents a black knight.
+			/// @note the bit representation: 0b1010 = 8 (black) | 2 (knight)
+			BlackKnight = 10,
+			/// @brief Represents a black bishop.
+			/// @note the bit representation: 0b1011 = 8 (black) | 3 (bishop)
+			BlackBishop = 11,
+			/// @brief Represents a black rook.
+			/// @note the bit representation: 0b1100 = 8 (black) | 4 (rook)
+			BlackRook = 12,
+			/// @brief Represents a black queen.
+			/// @note the bit representation: 0b1101 = 8 (black) | 5 (queen)
+			BlackQueen = 13,
+			/// @brief Represents a black king.
+			/// @note the bit representation: 0b1110 = 8 (black) | 6 (king)
+			BlackKing = 14,
 		};
 		/// @brief Bit mask for extracting piece type (bits 0-2).
-		static constexpr auto HexSeven = 0x7U;
+		static constexpr auto HexSeven{0x7U};
 		/// @brief Bit mask for extracting color (bit 3).
-		static constexpr auto HexEight = 0x8U;
+		static constexpr auto HexEight{0x8U};
 		UnderlyingType underlying_type_{UnderlyingType::Empty};
 
 		/// @brief Get the underlying type of ChessPiece represented as bits.

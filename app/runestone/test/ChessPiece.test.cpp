@@ -24,23 +24,22 @@ TEST(ChessPiece, constructor)
 	{
 		for (auto type : magic_enum::enum_values<runestone::ChessPiece::Type>())
 		{
-			const auto found =
-				std::ranges::any_of(pieces,
-									[&](const runestone::ChessPiece& p)
-									{
-										auto c = p.piece_color();
-										if (!c)
-										{
-											return p.piece_type() == runestone::ChessPiece::Type::Empty;
-										}
-										return c.value() == color && p.piece_type() == type && type != runestone::ChessPiece::Type::Empty;
-									});
+			const auto found = std::ranges::any_of(pieces,
+												   [&](const runestone::ChessPiece& p)
+												   {
+													   auto c = p.color();
+													   if (!c)
+													   {
+														   return p.type() == runestone::ChessPiece::Type::Empty;
+													   }
+													   return c.value() == color && p.type() == type && type != runestone::ChessPiece::Type::Empty;
+												   });
 			EXPECT_TRUE(found) << "Missing/invalid piece for color=" << magic_enum::enum_name(color) << " type=" << magic_enum::enum_name(type);
 		}
 	}
 
 	runestone::ChessPiece white_empty{runestone::ChessPiece::Color::White, runestone::ChessPiece::Type::Empty};
-	EXPECT_FALSE(white_empty.piece_color().has_value());
+	EXPECT_FALSE(white_empty.color().has_value());
 }
 // NOLINTEND
 
@@ -52,7 +51,7 @@ TEST(ChessPiece, pieceType)
 		for (const auto type : magic_enum::enum_values<runestone::ChessPiece::Type>())
 		{
 			const auto chess_piece = runestone::ChessPiece(color, type);
-			EXPECT_EQ(chess_piece.piece_type(), type);
+			EXPECT_EQ(chess_piece.type(), type);
 		}
 	}
 }
@@ -68,16 +67,16 @@ TEST(ChessPiece, pieceColor)
 			const auto chess_piece = runestone::ChessPiece(color, type);
 			if (type == runestone::ChessPiece::Type::Empty)
 			{
-				auto c = chess_piece.piece_color();
+				auto c = chess_piece.color();
 				if (!c)
 				{
-					EXPECT_EQ(chess_piece.piece_color().error(), runestone::ChessPiece::Error::InvalidInputPiece);
+					EXPECT_EQ(chess_piece.color().error(), runestone::ChessPiece::Error::InvalidInputPiece);
 				}
 			}
 
 			if (type != runestone::ChessPiece::Type::Empty)
 			{
-				EXPECT_EQ(chess_piece.piece_color().value(), color);
+				EXPECT_EQ(chess_piece.color().value(), color);
 			}
 		}
 	}
